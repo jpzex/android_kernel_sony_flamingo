@@ -40,7 +40,7 @@ static struct msm_sensor_power_setting ov7695_power_setting[] = {
 		.config_val = 0,
 		.delay = 1,
 	},
-#ifndef CONFIG_SONY_FLAMINGO
+#ifdef CONFIG_SONY_FLAMINGO
 	{	.seq_type = SENSOR_VREG,
 		.seq_val = CAM_VAF,		//use CAM_VAF for new CAM_VDDIO in RITA
 		.config_val = 0,
@@ -48,7 +48,7 @@ static struct msm_sensor_power_setting ov7695_power_setting[] = {
 	},
 #endif		
 //[ALL][CAMEAR][Kent][33434][Begin] remove the the GPIO of VDDIO power controller in RITA PDP2
-#ifdef CONFIG_SONY_FLAMINGO
+#ifndef CONFIG_SONY_FLAMINGO
 	{
 		.seq_type = SENSOR_GPIO,
 		.seq_val = SENSOR_GPIO_VIO,
