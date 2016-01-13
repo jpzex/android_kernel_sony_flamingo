@@ -288,7 +288,13 @@ int msm_jpeg_platform_init(struct platform_device *pdev,
 	*base = jpeg_base;
 	*irq  = jpeg_irq;
 
+//[Camera][Kent][43661][01Begin]fixed that creating debugfs on /ion/clients/camera/jpeg-0 will failed 
+#if 0
 	pgmn_dev->jpeg_client = msm_ion_client_create(-1, "camera/jpeg");
+#else
+	pgmn_dev->jpeg_client = msm_ion_client_create(-1, "jpeg");
+#endif	
+//[Camera][Kent][43661][01End]fixed that creating debugfs on /ion/clients/camera/jpeg-0 will failed 
 	JPEG_DBG("%s:%d] success\n", __func__, __LINE__);
 
 	pgmn_dev->state = MSM_JPEG_INIT;

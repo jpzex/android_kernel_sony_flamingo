@@ -28,12 +28,13 @@
 #define CCI_I2C_QUEUE_1_SIZE 16
 #define CYCLES_PER_MICRO_SEC 4915
 #define CCI_MAX_DELAY 10000
-
-#ifdef CONFIG_SONY_FLAMINGO
-#define CCI_TIMEOUT msecs_to_jiffies(500)
-#else
+//[BSP][CAMERA][Kent][34147][01Begin]sometime camera will open fialed because cci_init timeout.
+#if 0
 #define CCI_TIMEOUT msecs_to_jiffies(100)
+#else
+#define CCI_TIMEOUT msecs_to_jiffies(500)
 #endif
+//[BSP][CAMERA][Kent][34147][01End]sometime camera will open fialed because cci_init timeout.
 
 /* TODO move this somewhere else */
 #define MSM_CCI_DRV_NAME "msm_cci"
@@ -185,7 +186,11 @@ static int32_t msm_cci_data_queue(struct cci_device *cci_dev,
 	uint16_t i = 0, j = 0, k = 0, h = 0, len = 0;
 	int32_t rc = 0;
 	uint32_t cmd = 0, delay = 0;
+	
+	//# << 2014/06/12-39462-youchihwang, SecurityPatch [All] [Main] [S1] [Flamingo E2] CR529177 DMS05637956
 	uint8_t data[11];
+	//# >> 2014/06/12-39462-youchihwang, SecurityPatch [All] [Main] [S1] [Flamingo E2] CR529177 DMS05637956
+	
 	uint16_t reg_addr = 0;
 	struct msm_camera_i2c_reg_setting *i2c_msg =
 		&c_ctrl->cfg.cci_i2c_write_cfg;
@@ -622,7 +627,11 @@ static int32_t msm_cci_i2c_write(struct v4l2_subdev *sd,
 		msm_cci_flush_queue(cci_dev, master);
 		goto ERROR;
 	} else {
+	
+	    //# << 2014/06/12-39462-youchihwang, SecurityPatch [All] [Main] [S1] [Flamingo E2] CR529177 DMS05637956
 		rc = cci_dev->cci_master_info[master].status;
+		//# >> 2014/06/12-39462-youchihwang, SecurityPatch [All] [Main] [S1] [Flamingo E2] CR529177 DMS05637956
+		
 	}
 	CDBG("%s:%d X wait_for_completion_interruptible\n", __func__,
 		__LINE__);

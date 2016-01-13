@@ -27,9 +27,11 @@
 //[all][Main][Camera][42153][01Begin] add driver attribute to read sensor id for mount test
 static ssize_t ov7695_read_id_attr(struct device *dev,struct device_attribute *attr, char *buf);
 static DEVICE_ATTR(read_id, 0664, ov7695_read_id_attr, NULL);
+//[all][Main][Camera][42153][01End] add driver attribute to read sensor id for mount test
 //[all][Main][Camera][42153][02Begin] add driver attribute to read firmware version 
 static ssize_t ov7695_read_version_attr(struct device *dev,struct device_attribute *attr, char *buf);
 static DEVICE_ATTR(read_version, 0664, ov7695_read_version_attr, NULL);
+//[all][Main][Camera][42153][02End] add driver attribute to read firmware version 
 DEFINE_MSM_MUTEX(ov7695_mut);
 static struct msm_sensor_ctrl_t ov7695_s_ctrl;
 
@@ -40,7 +42,8 @@ static struct msm_sensor_power_setting ov7695_power_setting[] = {
 		.config_val = 0,
 		.delay = 1,
 	},
-#ifdef CONFIG_SONY_FLAMINGO
+#if ((CONFIG_BSP_HW_V_CURRENT >= CONFIG_BSP_HW_V_8226DS_PDP1) && defined(CONFIG_BSP_HW_SKU_8226DS) \
+		 ||  (CONFIG_BSP_HW_V_CURRENT >= CONFIG_BSP_HW_V_8226SS_PDP1) && defined(CONFIG_BSP_HW_SKU_8226SS))
 	{	.seq_type = SENSOR_VREG,
 		.seq_val = CAM_VAF,		//use CAM_VAF for new CAM_VDDIO in RITA
 		.config_val = 0,
@@ -48,14 +51,16 @@ static struct msm_sensor_power_setting ov7695_power_setting[] = {
 	},
 #endif		
 //[ALL][CAMEAR][Kent][33434][Begin] remove the the GPIO of VDDIO power controller in RITA PDP2
-#ifndef CONFIG_SONY_FLAMINGO
+#if ((CONFIG_BSP_HW_V_CURRENT >= CONFIG_BSP_HW_V_8926DS_PDP1) && defined(CONFIG_BSP_HW_SKU_8926DS) \
+		 ||  (CONFIG_BSP_HW_V_CURRENT >= CONFIG_BSP_HW_V_8926SS_PDP1) && defined(CONFIG_BSP_HW_SKU_8926SS))
 	{
 		.seq_type = SENSOR_GPIO,
 		.seq_val = SENSOR_GPIO_VIO,
 		.config_val = GPIO_OUT_HIGH,
 		.delay = 0,
 	},
-#endif
+#endif // end of project define for Arima E2
+//[ALL][CAMEAR][Kent][33434][End] remove the the GPIO of VDDIO power controller in RITA PDP2
 	{
 		.seq_type = SENSOR_VREG,  ///only USE for i2c pull high
 		.seq_val = CAM_VIO,
@@ -81,6 +86,9 @@ static struct msm_sensor_power_setting ov7695_power_setting[] = {
 		.delay = 0,
 	},
 };
+//static struct msm_camera_i2c_reg_conf ov7695_720p_settings[] = {
+//
+//};
 
 static struct msm_camera_i2c_reg_conf ov7695_recommend_settings[] = {
 	{0x0103 ,0x01},
@@ -146,11 +154,15 @@ static struct msm_camera_i2c_reg_conf ov7695_recommend_settings[] = {
 
 	//@@ OV7695_ISP
 //[All][Main][DMS][34459] Modify mount angle issue S
-#ifdef CONFIG_SONY_FLAMINGO
+#if ((CONFIG_BSP_HW_V_CURRENT >= CONFIG_BSP_HW_V_8226SS_DP) && defined(CONFIG_BSP_HW_SKU_8226SS) \
+||  (CONFIG_BSP_HW_V_CURRENT >= CONFIG_BSP_HW_V_8226DS_DP) && defined(CONFIG_BSP_HW_SKU_8226DS) \
+||  (CONFIG_BSP_HW_V_CURRENT >= CONFIG_BSP_HW_V_8926SS_DP) && defined(CONFIG_BSP_HW_SKU_8926SS) \
+||  (CONFIG_BSP_HW_V_CURRENT >= CONFIG_BSP_HW_V_8926DS_DP) && defined(CONFIG_BSP_HW_SKU_8926DS))
 	{0x0101 ,0x02},
 #else
 	{0x0101 ,0x01}, //mirror_on
 #endif
+//[All][Main][DMS][34459] Modify mount angle issue E
 	{0x5002 ,0x48}, //[7:6] Y source select// [3]LENC bias plus
 	{0x5910 ,0x00}, //Y formula
 	{0x3a0f ,0x58},
@@ -163,8 +175,10 @@ static struct msm_camera_i2c_reg_conf ov7695_recommend_settings[] = {
 	{0x3a19 ,0xe0}, //f8; max gain 15.5x
 	{0x3503 ,0x00}, //aec/agc
 	{0x3a0d ,0x04},//03//60Hz Max Band Step
+
 	{0x5000 ,0xff}, //lcd,gma,awb,awbg,bc,wc,lenc,isp
 	{0x5001 ,0x3f}, //avg, blc,sde,uv_avg,cmx, cip
+
 	//lens
 	//R
 	{0x5100 ,0x01},
@@ -197,8 +211,8 @@ static struct msm_camera_i2c_reg_conf ov7695_recommend_settings[] = {
 	//AWB
 	{0x520a ,0xf4},
 	{0x520b ,0xf4},
-	{0x520c ,0xb4}, //94,f4
-	{0x5004 ,0x45},
+        {0x520c ,0xb4}, //94,f4
+        {0x5004 ,0x45},
 	{0x5006 ,0x41},
 
 	//@@ Gamma
@@ -288,14 +302,36 @@ static struct msm_camera_i2c_reg_conf ov7695_recommend_settings[] = {
     {0x5116,0x00},//  ;B_B1 [7:0]        
     {0x5117,0x00},//  ;B_B2 [3:0]	
 
-    //;@@ -1.0EV
+
+    //;@@ -0.7EV to meet 128
+//    {0x3a0f,0x48},
+//    {0x3a10,0x40},
+//    {0x3a11,0x90},
+//    {0x3a1b,0x4A},
+//    {0x3a1e,0x3E},
+//    {0x3a1f,0x18},
+
+    //;@@ -1.0EV     20140617-16:34 OV Tom Chen for over-exposure issue.
     {0x3a11,0x88},
-    {0x3a1b,0x42},
+
+    {0x3a1b,0x42},    
     {0x3a0f,0x40},
     {0x3a10,0x38},
     {0x3a1e,0x36},
     
     {0x3a1f,0x10},
+
+    //;@@ -1.3EV     20140617-16:34 OV Tom Chen for over-exposure issue.
+//    {0x3a11,0x80},
+
+//    {0x3a1b,0x3A},    
+//    {0x3a0f,0x38},
+//    {0x3a10,0x30},
+//    {0x3a1e,0x2E},
+    
+//    {0x3a1f,0x08},
+
+    //;adding on 20140127-tom
 
     //;@@ ov ori ctx(19.)
     {0x5604,0x1c}, 
@@ -336,7 +372,7 @@ static struct msm_camera_i2c_reg_conf ov7695_recommend_settings[] = {
       
 //;@@ edge
 //    {0x5502 ,0x2c},//;1c,38;20;18 ;sharp mt offset1
-    {0x5502 ,0x0A},//;1c,38;20;18 ;sharp mt offset1
+    {0x5502 ,0x0A},//;1c,38;20;18 ;sharp mt offset1   // 20140617-16:34 OV Tom Chen for edge issue.
     {0x5503 ,0x04},//;06,14;08;04 ;sharp mt offset2
     {0x5310 ,0x28},   //16
     {0x5301 ,0x05},   
@@ -355,6 +391,7 @@ static struct msm_camera_i2c_reg_conf ov7695_recommend_settings[] = {
     {0x530e ,0xcb},   //de
     {0x530f ,0xe2},   //ef
 
+//for init AWB in fluorescent   20140624 for greenish when launch front camera. Joseph
     {0x5200,0x20}, //  MWB
     {0x5204,0x04},//R Gain
     {0x5205,0xA0},  
@@ -364,10 +401,12 @@ static struct msm_camera_i2c_reg_conf ov7695_recommend_settings[] = {
     {0x5209,0x8e},
 
     #endif
+    	//[BSP][CAMERA][KENT][01End]camera fine tune register setting
 };
 static struct msm_camera_i2c_reg_conf ov7695_stop[] = {
 	//[BSP][CAMERA][KENT][02Begin]fix the chroma of snapshot is different from the chroma of preview
 	{0x100 ,0x01},
+	//[BSP][CAMERA][KENT][02End]fix the chroma of snapshot is different from the chroma of preview
 };
 static struct msm_camera_i2c_reg_conf ov7695_start[] = {
 	{0x100 ,0x01},
@@ -449,6 +488,7 @@ static struct msm_camera_i2c_reg_conf ov7695_reg_antibanding[][1] = {
 		{0x5002, 0x48},//60Hz
 	},
 };
+ //[BSP][CAMERA][KENT][03Begin]add white balance and antibanding setting
 
 //[BSP][CAMERA][KENT][36089][01Begin]add SET_FPS function
 static struct msm_camera_i2c_reg_conf ov7695_reg_fps[][2] = {
@@ -517,6 +557,7 @@ static struct msm_camera_i2c_reg_conf ov7695_reg_fps[][2] = {
 			{0x0343, 0xea},
 		},
 };
+//[BSP][CAMERA][KENT][36089][01End]add SET_FPS function
 
 static int32_t msm_ov7695_i2c_probe(struct i2c_client *client,
 	const struct i2c_device_id *id)
@@ -558,13 +599,18 @@ static int32_t ov7695_platform_probe(struct platform_device *pdev)
 	match = of_match_device(ov7695_dt_match, &pdev->dev);
 	rc = msm_sensor_platform_probe(pdev, match->data);
 //[all][Main][Camera][42153][03Begin] add driver attribute to read sensor id for mount test
+//	pr_err("device addr= %x\n",(uint32_t)&pdev->dev);
+//	pr_err("driver addr =%x \n",(uint32_t)&ov7695_s_ctrl);
+//	pr_err("get driver addr =%x \n",(uint32_t)dev_get_drvdata(&pdev->dev));
 	ret = device_create_file(&(pdev->dev), &dev_attr_read_id);
 	if (0 != ret)
 		pr_err("%s:%d creating attribute failed \n", __func__,__LINE__);
+//[all][Main][Camera][42153][03End] add driver attribute to read sensor id for mount test
 //[all][Main][Camera][42153][04Begin] add driver attribute to read firmware version 
 	ret = device_create_file(&(pdev->dev), &dev_attr_read_version);
 		if (0 != ret)
 			pr_err("%s:%d creating attribute failed \n", __func__,__LINE__);
+//[all][Main][Camera][42153][04End] add driver attribute to read firmware version 
 	return rc;
 }
  //[BSP][CAMERA][KENT][04Begin]add white balance and antibanding setting
@@ -627,6 +673,7 @@ static void ov7695_set_antibanding(struct msm_sensor_ctrl_t *s_ctrl, int value)
 		MSM_CAMERA_I2C_BYTE_DATA);
 	}
 }
+ //[BSP][CAMERA][KENT][04End]add white balance and antibanding setting
 
 //[BSP][CAMERA][KENT][36089][02Begin]add SET_FPS function
 static void ov7695_set_fps(struct msm_sensor_ctrl_t *s_ctrl, int value)
@@ -648,6 +695,7 @@ static void ov7695_set_fps(struct msm_sensor_ctrl_t *s_ctrl, int value)
 	ARRAY_SIZE(ov7695_reg_fps[0]),
 	MSM_CAMERA_I2C_BYTE_DATA);
 }
+//[BSP][CAMERA][KENT][36089][02End]add SET_FPS function
 
 static int __init ov7695_init_module(void)
 {
@@ -710,6 +758,11 @@ int32_t ov7695_sensor_config(struct msm_sensor_ctrl_t *s_ctrl,
 			MSM_CAMERA_I2C_BYTE_DATA);
 		break;
 	case CFG_SET_RESOLUTION:
+//		rc = s_ctrl->sensor_i2c_client->i2c_func_tbl->
+//			i2c_write_conf_tbl(
+//			s_ctrl->sensor_i2c_client, ov7695_720p_settings,
+//			ARRAY_SIZE(ov7695_720p_settings),
+//			MSM_CAMERA_I2C_WORD_DATA);
 		break;
 	case CFG_SET_STOP_STREAM:
 		rc = s_ctrl->sensor_i2c_client->i2c_func_tbl->
@@ -726,11 +779,13 @@ int32_t ov7695_sensor_config(struct msm_sensor_ctrl_t *s_ctrl,
 						MSM_CAMERA_I2C_BYTE_DATA);
 //for init AWB in fluorescent   20140624 for greenish when launch front camera. Joseph
 		msleep(100);
+															
 		rc = s_ctrl->sensor_i2c_client->i2c_func_tbl->
 			i2c_write_conf_tbl(
 			s_ctrl->sensor_i2c_client, ov7695_reg_wb_auto,
 			ARRAY_SIZE(ov7695_reg_wb_auto),
 			MSM_CAMERA_I2C_BYTE_DATA);
+								
 		break;
 	case CFG_GET_SENSOR_INIT_PARAMS:
 		cdata->cfg.sensor_init_params =
@@ -1013,6 +1068,7 @@ int32_t ov7695_sensor_config(struct msm_sensor_ctrl_t *s_ctrl,
 		ov7695_set_antibanding(s_ctrl, antibanding_mode);
 		break;
         	}
+  //[BSP][CAMERA][KENT][05End]add white balance and antibanding setting
        //[BSP][CAMERA][KENT][36089][03Begin]add SET_FPS function
 		case CFG_SET_FPS: {
 				int32_t fps_value;
@@ -1094,7 +1150,7 @@ static ssize_t ov7695_read_id_attr(struct device *dev,struct device_attribute *a
 
 	 return sprintf(buf, "%x\n", chipid);
 }
-
+//[all][Main][Camera][42153][05End] add driver attribute to read sensor id for mount test
 //[all][Main][Camera][42153][06Begin] add driver attribute to read firmware version 
 static ssize_t ov7695_read_version_attr(struct device *dev,struct device_attribute *attr, char *buf)
 {
@@ -1129,3 +1185,4 @@ static ssize_t ov7695_read_version_attr(struct device *dev,struct device_attribu
 
 	 return sprintf(buf, "%x\n", version);
 }
+//[all][Main][Camera][42153][06End] add driver attribute to read firmware version 

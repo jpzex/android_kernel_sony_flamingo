@@ -21,27 +21,32 @@
 #include <linux/regulator/consumer.h>
 
 //[All][Main][Camera][40101]Modify for Camera Second source 20140411 S
-#ifdef CONFIG_SONY_FLAMINGO
+#if CONFIG_BSP_HW_SKU_ALL
 uint16_t s5k5e2_version = 0;
-int powerup_count = 0;
 #endif
+//[All][Main][Camera][40101]Modify for Camera Second source 20140411 E
 
+//[All][Main][Camera][DMS][34075] Fixed Camera CTS issue:testMultiCameraRelease S
+int powerup_count = 0;
+//[All][Main][Camera][DMS][34075] Fixed Camera CTS issue:testMultiCameraRelease E
+
+//[All][Main][Camera][DMS05342022][DMS05340305] Disable Debug Log for reduce boot up time
+//#define CONFIG_MSMB_CAMERA_DEBUG
 #undef CDBG
 #ifdef CONFIG_MSMB_CAMERA_DEBUG
 #define CDBG(fmt, args...) pr_err(fmt, ##args)
 #else
 #define CDBG(fmt, args...) do { } while (0)
 #endif
-
 //[All][Main][Camera][40101]Modify for Camera Second source 20140411 S
-#ifdef CONFIG_SONY_FLAMINGO
+#if CONFIG_BSP_HW_SKU_ALL
 static struct msm_camera_i2c_reg_conf s5k5e2_read_eeprom[] = {
 	{0x0A00 ,0x04},
 	{0x0A02 ,0x02},
 	{0x0A00 ,0x01},
 };
 #endif
-
+//[All][Main][Camera][40101]Modify for Camera Second source 20140411 E
 static int32_t msm_sensor_enable_i2c_mux(struct msm_camera_i2c_conf *i2c_conf)
 {
 	struct v4l2_subdev *i2c_mux_sd =
@@ -986,9 +991,8 @@ int32_t msm_sensor_power_up(struct msm_sensor_ctrl_t *s_ctrl)
 	s_ctrl->stop_setting_valid = 0;
 
 	//[All][Main][Camera][DMS][34075] Fixed Camera CTS issue:testMultiCameraRelease S	
-#ifdef CONFIG_SONY_FLAMINGO
 		powerup_count ++;
-#endif
+	//[All][Main][Camera][DMS][34075] Fixed Camera CTS issue:testMultiCameraRelease E
 
 	CDBG("%s:%d\n", __func__, __LINE__);
 	power_setting_array = &s_ctrl->power_setting_array;
@@ -1111,9 +1115,8 @@ int32_t msm_sensor_power_up(struct msm_sensor_ctrl_t *s_ctrl)
 	return 0;
 power_up_failed:
 	//[All][Main][Camera][DMS][34075] Fixed Camera CTS issue:testMultiCameraRelease S	
-#ifdef CONFIG_SONY_FLAMINGO
 		powerup_count --;
-#endif
+	//[All][Main][Camera][DMS][34075] Fixed Camera CTS issue:testMultiCameraRelease E	
 	pr_err("%s:%d failed\n", __func__, __LINE__);
 	if (s_ctrl->sensor_device_type == MSM_CAMERA_PLATFORM_DEVICE) {
 		s_ctrl->sensor_i2c_client->i2c_func_tbl->i2c_util(
@@ -1174,13 +1177,13 @@ int32_t msm_sensor_power_down(struct msm_sensor_ctrl_t *s_ctrl)
 	s_ctrl->stop_setting_valid = 0;
 
 	//[All][Main][Camera][DMS][34075] Fixed Camera CTS issue:testMultiCameraRelease S
-#ifdef CONFIG_SONY_FLAMINGO
 	if(powerup_count >1){
 		powerup_count--;
 		pr_info("msm_sensor_power_down: Can not power down!Ohter Camera still work!");
 		return 0;
 	}
-#endif
+	//[All][Main][Camera][DMS][34075] Fixed Camera CTS issue:testMultiCameraRelease E
+
 
 	CDBG("%s:%d\n", __func__, __LINE__);
 	power_setting_array = &s_ctrl->power_setting_array;
@@ -1246,9 +1249,8 @@ int32_t msm_sensor_power_down(struct msm_sensor_ctrl_t *s_ctrl)
 		data->gpio_conf->cam_gpio_req_tbl,
 		data->gpio_conf->cam_gpio_req_tbl_size, 0);
 //[All][Main][Camera][DMS][34075] Fixed Camera CTS issue:testMultiCameraRelease S
-#ifdef CONFIG_SONY_FLAMINGO
 	powerup_count = 0;
-#endif
+//[All][Main][Camera][DMS][34075] Fixed Camera CTS issue:testMultiCameraRelease E
 
 	CDBG("%s exit\n", __func__);
 	return 0;
@@ -1341,7 +1343,7 @@ int32_t msm_sensor_config(struct msm_sensor_ctrl_t *s_ctrl,
 	switch (cdata->cfgtype) {
 	case CFG_GET_SENSOR_INFO:
 //[All][Main][Camera][40101]Modify for Camera Second source 20140411 S
-#ifdef CONFIG_SONY_FLAMINGO
+#if CONFIG_BSP_HW_SKU_ALL
 		memcpy(cdata->cfg.sensor_info.sensor_name,
 			s_ctrl->sensordata->sensor_info->sensor_name,
 			sizeof(cdata->cfg.sensor_info.sensor_name));
@@ -1350,6 +1352,7 @@ int32_t msm_sensor_config(struct msm_sensor_ctrl_t *s_ctrl,
 			s_ctrl->sensordata->sensor_name,
 			sizeof(cdata->cfg.sensor_info.sensor_name));
 #endif
+//[All][Main][Camera][40101]Modify for Camera Second source 20140411 E
 		cdata->cfg.sensor_info.session_id =
 			s_ctrl->sensordata->sensor_info->session_id;
 		for (i = 0; i < SUB_MODULE_MAX; i++)
@@ -1904,9 +1907,8 @@ int32_t msm_sensor_platform_probe(struct platform_device *pdev, void *data)
 		kfree(cci_client);
 		return rc;
 	}
-
 //[All][Main][Camera][40101]Modify for Camera Second source 20140411 S
-#ifdef CONFIG_SONY_FLAMINGO
+#if CONFIG_BSP_HW_SKU_ALL
 	rc = strcmp(s_ctrl->sensordata->sensor_name,"s5k5e2");
 	if(rc == 0){
 	rc = s_ctrl->sensor_i2c_client->i2c_func_tbl->i2c_write_conf_tbl(
@@ -1949,6 +1951,7 @@ int32_t msm_sensor_platform_probe(struct platform_device *pdev, void *data)
 		sizeof(s_ctrl->msm_sd.sd.name), "%s",
 		s_ctrl->sensordata->sensor_name);
 #endif
+//[All][Main][Camera][40101]Modify for Camera Second source 20140411 S
 	v4l2_set_subdevdata(&s_ctrl->msm_sd.sd, pdev);
 	s_ctrl->msm_sd.sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
 	media_entity_init(&s_ctrl->msm_sd.sd.entity, 0, NULL, 0);

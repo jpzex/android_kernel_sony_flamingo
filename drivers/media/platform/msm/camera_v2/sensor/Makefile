@@ -24,5 +24,6 @@ obj-$(CONFIG_S5K5EAYX) += s5k5eayx.o
 obj-$(CONFIG_IMX188) += imx188.o
 obj-$(CONFIG_OV5648_PDP1) += ov5648_pdp1.o
 obj-$(CONFIG_BF3905) += bf3905.o
+# [ALL][MAIN][CAMERA][Kent][32695.01End] adding ov7695 camera sensor driver
 obj-$(CONFIG_S5K5E2) += s5k5e2.o
 obj-$(CONFIG_OV7695) += ov7695.o

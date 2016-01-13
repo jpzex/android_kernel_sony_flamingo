@@ -114,12 +114,11 @@ int msm_camera_get_dt_power_setting_data(struct device_node *of_node,
 			else if (!strcmp(seq_name, "sensor_gpio_vdig"))
 				ps[i].seq_val = SENSOR_GPIO_VDIG;
 //[All][Main][Camera][DMS][34003] Modify for Rear camera eeprom 20140219 S
-#ifdef CONFIG_SONY_FLAMINGO
 			else if (!strcmp(seq_name, "sensor_gpio_vio"))
 				ps[i].seq_val = SENSOR_GPIO_VIO;
 			else if (!strcmp(seq_name, "sensor_gpio_vana"))
 				ps[i].seq_val = SENSOR_GPIO_VANA;			
-#endif
+//[All][Main][Camera][DMS][34003] Modify for Rear camera eeprom 20140219 E
 			else
 				rc = -EILSEQ;
 			break;
@@ -345,6 +344,7 @@ int32_t msm_camera_init_gpio_pin_tbl(struct device_node *of_node,
 			gconf->gpio_num_info->gpio_num[SENSOR_GPIO_VANA]);
 	}	
 
+//[All][Main][Camera][DMS][34003] Modify for Rear camera eeprom 20140219 E
 	if (of_property_read_bool(of_node, "qcom,gpio-reset") == true) {
 		rc = of_property_read_u32(of_node, "qcom,gpio-reset", &val);
 		if (rc < 0) {
@@ -620,11 +620,6 @@ int msm_camera_power_up(struct msm_camera_power_ctrl_t *ctrl,
 	return 0;
 power_up_failed:
 	pr_err("%s:%d failed\n", __func__, __LINE__);
-	if (device_type == MSM_CAMERA_PLATFORM_DEVICE) {
-		sensor_i2c_client->i2c_func_tbl->i2c_util(
-			sensor_i2c_client, MSM_CCI_RELEASE);
-	}
-
 	for (index--; index >= 0; index--) {
 		CDBG("%s index %d\n", __func__, index);
 		power_setting = &ctrl->power_setting[index];

@@ -40,9 +40,13 @@
 #define MAX_ACTUATOR_REGION 5
 #define MAX_ACTUATOR_INIT_SET 12
 #define MAX_ACTUATOR_REG_TBL_SIZE 8
+#define MAX_ACTUATOR_AF_TOTAL_STEPS 1024
 
 #define MOVE_NEAR 0
 #define MOVE_FAR  1
+
+#define MSM_ACTUATOR_MOVE_SIGNED_FAR -1
+#define MSM_ACTUATOR_MOVE_SIGNED_NEAR  1
 
 #define MAX_EEPROM_NAME 32
 
@@ -435,10 +439,9 @@ enum msm_sensor_cfg_type_t {
 	CFG_SET_WHITE_BALANCE,
 	CFG_SET_AUTOFOCUS,
 	CFG_CANCEL_AUTOFOCUS,
-//[BSP][CAMERA][KENT][36089][01Begin]add SET_FPS function
-#ifdef CONFIG_SONY_FLAMINGO
+	//[BSP][CAMERA][KENT][36089][01Begin]add SET_FPS function
 	CFG_SET_FPS,
-#endif
+	//[BSP][CAMERA][KENT][36089][01End]add SET_FPS function
 };
 
 enum msm_actuator_cfg_type_t {
@@ -540,9 +543,10 @@ enum af_camera_name {
 	ACTUATOR_MAIN_CAM_4,
 	ACTUATOR_MAIN_CAM_5,
 //[All][Main][Camera][40101]Modify for Camera Second source 20140411 S
-#ifdef CONFIG_SONY_FLAMINGO
+#if CONFIG_BSP_HW_SKU_ALL
 	ACTUATOR_MAIN_CAM_6,	
 #endif
+//[All][Main][Camera][40101]Modify for Camera Second source 20140411 E
 	ACTUATOR_WEB_CAM_0,
 	ACTUATOR_WEB_CAM_1,
 	ACTUATOR_WEB_CAM_2,

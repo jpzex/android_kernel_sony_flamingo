@@ -531,6 +531,308 @@ config ARCH_MSM8226
 	select ARCH_WANT_KMAP_ATOMIC_FLUSH
 	select ENABLE_VMALLOC_SAVINGS
 
+# [ArimaE2][BSP][32302][akenhsu] Add Project Define for E2 Series on LINUX 20131225 BEGIN
+choice
+	prompt "ARIMA Project Selection"
+	depends on ARCH_MSM8226
+	depends on !MSM_STACKED_MEMORY
+	default SKU_NOT_ARIMA
+
+	config SKU_NOT_ARIMA
+	bool "Arima SKU Not Arima SKU"
+
+	config SKU_8926_SS
+	bool "Arima SKU 8926 SS"
+
+	config SKU_8926_DS
+	bool "Arima SKU 8926 DS"
+
+	config SKU_8226_SS
+	bool "Arima SKU 8226 SS"
+
+	config SKU_8226_DS
+	bool "Arima SKU 8226 DS"
+	
+	config SKU_NONE
+	bool "No Arima Project"
+	
+endchoice
+
+choice
+	prompt "ARIMA 8926SS HW Version"
+	depends on SKU_8926_SS
+	default BSP_HW_NOT_ARIMA
+
+	config BSP_HW_B_8926SS_PDP1
+		bool "PDP1"
+
+	config BSP_HW_B_8926SS_PDP2
+		bool "PDP2"
+
+	config BSP_HW_B_8926SS_DP
+		bool "DP"
+
+	config BSP_HW_B_8926SS_DP2
+		bool "DP2"
+
+	config BSP_HW_B_8926SS_SP
+		bool "SP"
+
+	config BSP_HW_B_8926SS_AP
+		bool "AP"
+endchoice
+
+choice
+	prompt "ARIMA 8926DS HW Version"
+	depends on SKU_8926_DS
+	default BSP_HW_B_8926DS_PDP1
+
+	config BSP_HW_B_8926DS_PDP1
+		bool "PDP1"
+
+	config BSP_HW_B_8926DS_PDP2
+		bool "PDP2"
+
+	config BSP_HW_B_8926DS_DP
+		bool "DP"
+
+	config BSP_HW_B_8926DS_DP2
+		bool "DP2"
+
+	config BSP_HW_B_8926DS_SP
+		bool "SP"
+
+	config BSP_HW_B_8926DS_AP
+		bool "AP"
+endchoice
+
+choice
+	prompt "ARIMA 8226SS HW Version"
+	depends on SKU_8226_SS
+	default BSP_HW_B_8226SS_PDP1
+
+	config BSP_HW_B_8226SS_PDP1
+		bool "PDP1"
+
+	config BSP_HW_B_8226SS_PDP2
+		bool "PDP2"
+
+	config BSP_HW_B_8226SS_DP
+		bool "DP"
+
+	config BSP_HW_B_8226SS_DP2
+		bool "DP2"
+
+	config BSP_HW_B_8226SS_SP
+		bool "SP"
+
+	config BSP_HW_B_8226SS_AP
+		bool "AP"
+endchoice
+
+choice
+	prompt "ARIMA 8226DS HW Version"
+	depends on SKU_8226_DS
+	default BSP_HW_B_8226DS_PDP1
+
+	config BSP_HW_B_8226DS_PDP1
+		bool "PDP1"
+
+	config BSP_HW_B_8226DS_PDP2
+		bool "PDP2"
+
+	config BSP_HW_B_8226DS_DP
+		bool "DP"
+
+	config BSP_HW_B_8226DS_DP2
+		bool "DP2"
+
+	config BSP_HW_B_8226DS_SP
+		bool "SP"
+
+	config BSP_HW_B_8226DS_AP
+		bool "AP"
+endchoice
+
+config BSP_HW_SKU_8926SS
+	int
+	depends on SKU_8926_SS
+	default 1
+
+config BSP_HW_SKU_8926DS
+	int
+	depends on SKU_8926_DS
+	default 1
+
+config BSP_HW_SKU_8226SS
+	int
+	depends on SKU_8226_SS
+	default 1
+
+config BSP_HW_SKU_8226DS
+	int
+	depends on SKU_8226_DS
+	default 1
+
+config BSP_HW_SKU_ALL
+	int
+	default 1 if SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS
+	default 0 if SKU_NOT_ARIMA
+
+config BSP_HW_V_NOSKU_NOHWV
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 99999
+
+config BSP_HW_V_8926SS_PDP1
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 11000
+
+config BSP_HW_V_8926SS_PDP2
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 12000
+
+config BSP_HW_V_8926SS_DP
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 13000
+
+config BSP_HW_V_8926SS_DP2
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 14000
+
+config BSP_HW_V_8926SS_SP
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 15000
+
+config BSP_HW_V_8926SS_AP
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 16000
+
+config BSP_HW_V_8926DS_PDP1
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 21000
+
+config BSP_HW_V_8926DS_PDP2
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 22000
+
+config BSP_HW_V_8926DS_DP
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 23000
+
+config BSP_HW_V_8926DS_DP2
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 24000
+
+config BSP_HW_V_8926DS_SP
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 25000
+
+config BSP_HW_V_8926DS_AP
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 26000
+
+config BSP_HW_V_8226SS_PDP1
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 31000
+
+config BSP_HW_V_8226SS_PDP2
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 32000
+
+config BSP_HW_V_8226SS_DP
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 33000
+
+config BSP_HW_V_8226SS_DP2
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 34000
+
+config BSP_HW_V_8226SS_SP
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 35000
+
+config BSP_HW_V_8226SS_AP
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 36000
+
+config BSP_HW_V_8226DS_PDP1
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 41000
+
+config BSP_HW_V_8226DS_PDP2
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 42000
+
+config BSP_HW_V_8226DS_DP
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 43000
+
+config BSP_HW_V_8226DS_DP2
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 44000
+
+config BSP_HW_V_8226DS_SP
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 45000
+
+config BSP_HW_V_8226DS_AP
+	int
+	depends on SKU_8926_SS || SKU_8926_DS || SKU_8226_SS || SKU_8226_DS || SKU_NOT_ARIMA
+	default 46000
+
+config BSP_HW_V_CURRENT
+	int
+	default 99999 if SKU_NOT_ARIMA
+	default 41000 if BSP_HW_B_8226DS_PDP1
+	default 42000 if BSP_HW_B_8226DS_PDP2
+	default 43000 if BSP_HW_B_8226DS_DP
+	default 44000 if BSP_HW_B_8226DS_DP2
+	default 45000 if BSP_HW_B_8226DS_SP
+	default 46000 if BSP_HW_B_8226DS_AP
+	default 31000 if BSP_HW_B_8226SS_PDP1
+	default 32000 if BSP_HW_B_8226SS_PDP2
+	default 33000 if BSP_HW_B_8226SS_DP
+	default 34000 if BSP_HW_B_8226SS_DP2
+	default 35000 if BSP_HW_B_8226SS_SP
+	default 36000 if BSP_HW_B_8226SS_AP
+	default 21000 if BSP_HW_B_8926DS_PDP1
+	default 22000 if BSP_HW_B_8926DS_PDP2
+	default 23000 if BSP_HW_B_8926DS_DP
+	default 24000 if BSP_HW_B_8926DS_DP2
+	default 25000 if BSP_HW_B_8926DS_SP
+	default 26000 if BSP_HW_B_8926DS_AP
+	default 11000 if BSP_HW_B_8926SS_PDP1
+	default 12000 if BSP_HW_B_8926SS_PDP2
+	default 13000 if BSP_HW_B_8926SS_DP
+	default 14000 if BSP_HW_B_8926SS_DP2
+	default 15000 if BSP_HW_B_8926SS_SP
+	default 16000 if BSP_HW_B_8926SS_AP
+# [ArimaE2][BSP][32302][akenhsu] 20131225 END
+
 config ARCH_MSMSAMARIUM
 	bool "MSMSAMARIUM"
 	select ARCH_MSM_KRAITMP
@@ -2900,6 +3202,17 @@ config MSM_CACHE_DUMP_ON_PANIC
 	  look at them in a RAM dump will give useless data. Select this if you
 	  want to dump the L1 and L2 caches on panic before any flush occurs.
 	  If unsure, say N
+	  
+# [All][Main][power][DMS][34038][Raymond Lin] Add SONY Feature 17920 Stamina mode patch BEGIN	  
+config SONY_SSM
+	bool "Support Super Stamina Mode"
+	default n
+	help
+	  This enables support for power mode notifications, required by Super
+	  Stamina Mode. The driver will let a user space application register
+	  for notifications when the device is ready to switch into a new
+	  power mode.	  	  
+# [All][Main][power][DMS][34038][Raymond Lin] Add SONY Feature 17920 Stamina mode patch END	  
 
 config MSM_HSIC_SYSMON
 	tristate "MSM HSIC system monitor driver"
